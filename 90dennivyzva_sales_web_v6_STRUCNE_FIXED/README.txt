@@ -1,12 +1,13 @@
-90DENNÍ VÝZVA – PRODEJNÍ WEB V6
+90DENNÍ VÝZVA — PREMIUM FAST
 
-Obsah složky:
-- index.html
-- styles.css
-- script.js
-- logo.png
-- gpt-preview.png
+Tato složka se jmenuje stejně jako aktuální Root Directory ve Vercelu:
+90dennivyzva_sales_web_v6_STRUCNE_FIXED
 
-Tato verze má kratší texty, opravené karty balíčku a přehlednější prodejní strukturu.
-
-Pro GitHub nahraj všechny soubory přímo do stejné složky projektu.
+Změny:
+- odstraněné externí fonty a blokující požadavky
+- odstraněné filtry blur a backdrop-filter
+- lehčí, profesionálnější vzhled bez změny obsahu
+- WebP varianta velkého náhledu s PNG fallbackem
+- lazy loading obrázků pod první obrazovkou
+- postupné vykreslování spodních sekcí na mobilu
+- bezpečná cache bez dlouhodobého zamknutí starého CSS
