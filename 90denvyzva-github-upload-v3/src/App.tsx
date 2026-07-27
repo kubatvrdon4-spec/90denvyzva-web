@@ -313,7 +313,6 @@ function App() {
     <div className="site-shell">
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Keller — Weby pro trenéry">
-          <span className="brand-mark">K</span>
           <span className="brand-copy">
             <b>Keller</b>
             <small>weby pro trenéry</small>
@@ -646,7 +645,6 @@ function App() {
 
       <footer>
         <div className="footer-brand">
-          <span className="brand-mark">K</span>
           <div><b>Lukáš Keller</b><small>Weby pro trenéry a sportovní projekty</small></div>
         </div>
         <div className="footer-contact">
