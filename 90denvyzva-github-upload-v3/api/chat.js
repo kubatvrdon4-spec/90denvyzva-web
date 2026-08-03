@@ -1,3 +1,53 @@
+const MAX_LOG_FIELD_LENGTH = 4_000;
+
+const cleanLogField = (value) => String(value ?? "").trim().slice(0, MAX_LOG_FIELD_LENGTH);
+
+const isValidSessionId = (value) => /^[a-zA-Z0-9_-]{8,80}$/.test(String(value ?? ""));
+
+async function logChatEntry(entry) {
+  const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+  const secret = process.env.CHAT_LOG_SECRET;
+
+  if (!webhookUrl || !secret) {
+    console.error("Chat log is not configured");
+    return;
+  }
+
+  const payload = {
+    secret,
+    timestamp: new Date().toISOString(),
+    sessionId: isValidSessionId(entry.sessionId) ? entry.sessionId : "nezname",
+    type: cleanLogField(entry.type || "Zprava"),
+    question: cleanLogField(entry.question),
+    answer: cleanLogField(entry.answer),
+    action: cleanLogField(entry.action),
+    page: "90denvyzva.cz",
+  };
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10_000);
+
+  try {
+    const result = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      redirect: "follow",
+      signal: controller.signal,
+    });
+
+    const responseBody = await result.json().catch(() => ({}));
+
+    if (!result.ok || responseBody?.ok !== true) {
+      console.error("Chat log webhook failed", result.status, responseBody?.error || "unknown_error");
+    }
+  } catch (error) {
+    console.error("Chat log webhook unavailable", error instanceof Error ? error.message : "unknown_error");
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 const RATE_LIMIT_WINDOW = 10 * 60 * 1000;
 const RATE_LIMIT_REQUESTS = 18;
 const rateBuckets = globalThis.__kellerChatRateBuckets ?? new Map();
@@ -144,6 +194,13 @@ export default async function handler(request, response) {
     if (!message) {
       return response.status(502).json({ error: "empty_response" });
     }
+
+    await logChatEntry({
+      sessionId: body?.sessionId,
+      type: "Zprava",
+      question: messages.at(-1)?.content,
+      answer: message,
+    });
 
     return response.status(200).json({ message });
   } catch (error) {
