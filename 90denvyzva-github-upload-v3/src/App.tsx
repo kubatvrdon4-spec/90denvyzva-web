@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
+import AiAssistant from "./AiAssistant";
 
-const SMS_LINK =
-  "sms:+420601507018?body=Dobr%C3%BD%20den%2C%20m%C3%A1m%20z%C3%A1jem%20o%20web%20pro%20tren%C3%A9ra.%20Pros%C3%ADm%20o%20v%C3%ADce%20informac%C3%AD.";
+const WHATSAPP_NUMBER = "420795514816";
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  "Dobrý den, mám zájem o bezplatný návrh systému pro moje trenérské služby.",
+)}`;
+const CALL_SMS_LINK = `sms:+420601507018?body=${encodeURIComponent(
+  "Dobrý den, můžeme si zavolat ohledně webu pro moje trenérské služby?",
+)}`;
 const ASSET_BASE = import.meta.env.BASE_URL;
 
 const websiteSections = [
@@ -51,7 +57,7 @@ const websiteSections = [
     number: "07",
     label: "Kontakt",
     title: "Poptávka musí být jednodušší než zavřít stránku.",
-    text: "SMS, formulář, místo tréninků i sociální sítě jsou na jednom místě. Klient přesně ví, co se stane po odeslání.",
+    text: "WhatsApp, formulář, místo tréninků i sociální sítě jsou na jednom místě. Klient přesně ví, co se stane po odeslání.",
     preview: "contact",
   },
 ] as const;
@@ -148,6 +154,11 @@ const faqs = [
       "První návrh připravím do 10 dnů od dodání podkladů. Platba probíhá až po dokončení webu, takže předem vidíte výsledek, který dostáváte.",
   },
   {
+    question: "Co obsahuje bezplatný návrh systému?",
+    answer:
+      "Podívám se na vaše služby a současnou prezentaci. Doporučím hlavní nabídku webu, cestu od Instagramu k poptávce, vhodný způsob kontaktu nebo rezervace a obsah, který by měl budovat důvěru. Teprve potom se rozhodnete, zda chcete pokračovat tvorbou webu.",
+  },
+  {
     question: "Kolik web stojí?",
     answer:
       "Kompletní prezentační web pro trenéra nyní nabízím za 11 999 Kč místo 17 999 Kč. Pokud byste potřebovali výrazně větší rozsah nebo speciální funkce, domluvíme vše předem.",
@@ -156,6 +167,69 @@ const faqs = [
 
 function Arrow() {
   return <span aria-hidden="true">↗</span>;
+}
+
+function SystemProposalForm() {
+  const openWhatsApp = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const data = new FormData(event.currentTarget);
+    const name = String(data.get("name") ?? "").trim();
+    const profile = String(data.get("profile") ?? "").trim();
+    const offer = String(data.get("offer") ?? "").trim();
+    const goal = String(data.get("goal") ?? "").trim();
+    const message = [
+      "Dobrý den, mám zájem o bezplatný návrh systému pro moje trenérské služby.",
+      "",
+      `Jméno: ${name}`,
+      `Instagram nebo web: ${profile}`,
+      `Co nabízím: ${offer}`,
+      `Hlavní cíl: ${goal}`,
+    ].join("\n");
+
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  };
+
+  return (
+    <form className="proposal-form" id="formular" onSubmit={openWhatsApp}>
+      <div className="proposal-form-heading">
+        <span>4 krátké odpovědi</span>
+        <h3>Návrh připravím přímo pro vás.</h3>
+        <p>Po odeslání se otevře WhatsApp s připravenou zprávou. Nic se neobjednává ani neplatí.</p>
+      </div>
+
+      <label>
+        <span>Vaše jméno</span>
+        <input name="name" type="text" autoComplete="name" placeholder="Např. Martin Novák" required />
+      </label>
+
+      <label>
+        <span>Instagram nebo současný web</span>
+        <input name="profile" type="text" inputMode="url" placeholder="@profil nebo odkaz" required />
+      </label>
+
+      <label>
+        <span>Co chcete nabízet</span>
+        <input name="offer" type="text" placeholder="Např. osobní tréninky a online coaching" required />
+      </label>
+
+      <label>
+        <span>Co má zájemce udělat</span>
+        <select name="goal" defaultValue="" required>
+          <option value="" disabled>Vyberte hlavní cíl</option>
+          <option value="Napsat na WhatsApp">Napsat na WhatsApp</option>
+          <option value="Rezervovat si termín">Rezervovat si termín</option>
+          <option value="Koupit coaching nebo plán">Koupit coaching nebo plán</option>
+          <option value="Nevím — potřebuji doporučení">Nevím — potřebuji doporučení</option>
+        </select>
+      </label>
+
+      <button className="button button-accent" type="submit">
+        Odeslat přes WhatsApp <span>→</span>
+      </button>
+      <small>Odpovídá osobně Lukáš Keller · WhatsApp +420 795 514 816</small>
+    </form>
+  );
 }
 
 function TrainerPreview({ type }: { type: (typeof websiteSections)[number]["preview"] }) {
@@ -324,27 +398,27 @@ function App() {
           <a href="#realizace">Realizace</a>
           <a href="#spoluprace">Spolupráce</a>
         </nav>
-        <a className="header-cta" href={SMS_LINK}>Probrat váš web</a>
+        <a className="header-cta" href="#formular">Návrh zdarma</a>
       </header>
 
       <main id="top">
         <section className="hero section-dark">
           <div className="hero-copy">
-            <p className="eyebrow"><span>01</span> Web není vizitka. Je to obchodník.</p>
-            <h1>Web, který z trenéra udělá <em>jasnou volbu.</em></h1>
+            <p className="eyebrow"><span>01</span> Web postavený kolem vašich služeb</p>
+            <h1>Web, který z vás udělá <em>jasnou volbu.</em></h1>
             <p className="hero-lead">
-              Instagram přivede pozornost. Web z ní udělá důvěru a poptávku. Ukáže vaši práci,
-              skutečné výsledky i důvod, proč má klient začít právě s vámi.
+              Nejdřív pochopím, komu pomáháte, co chcete prodávat a jak má zájemce udělat první krok.
+              Potom vám zdarma navrhnu systém, který propojí Instagram, důvěru a nové poptávky.
             </p>
             <div className="hero-actions">
-              <a className="button button-accent" href={SMS_LINK}>Napsat SMS o webu <span>→</span></a>
-              <a className="text-link" href="#realizace">Prohlédnout realizace <Arrow /></a>
+              <a className="button button-accent" href="#formular">Chci návrh pro sebe <span>→</span></a>
+              <a className="text-link" href={CALL_SMS_LINK}>Domluvit krátký hovor <span>→</span></a>
             </div>
-            <p className="hero-assurance"><b>První návrh do 10 dnů.</b> Platíte až po dokončení webu.</p>
+            <p className="hero-assurance"><b>Bezplatně a nezávazně.</b> Stačí váš Instagram a čtyři krátké odpovědi.</p>
             <ul className="hero-facts" aria-label="Hlavní výhody">
-              <li>Design na míru</li>
-              <li>Texty a struktura</li>
-              <li>Rezervace i kontakt</li>
+              <li>Podle vaší specializace</li>
+              <li>Vaše nabídka a výsledky</li>
+              <li>WhatsApp nebo rezervace</li>
             </ul>
           </div>
 
@@ -373,6 +447,28 @@ function App() {
           <span>Platba až po dokončení</span>
           <span>Vlastní design, žádná šablona</span>
           <span>Web připravený pro mobil</span>
+        </section>
+
+        <section className="proposal section-paper" id="navrh">
+          <div className="proposal-copy">
+            <p className="eyebrow dark-eyebrow"><span>ZDARMA</span> Nejdřív konkrétní plán</p>
+            <h2>Podívám se na vaši situaci. Navrhnu systém <em>právě pro vás.</em></h2>
+            <p className="proposal-lead">
+              Žádný obecný dokument ani automaticky vytvořený audit. Prohlédnu si vaše služby,
+              současný profil a způsob, jakým vás dnes lidé kontaktují. Potom dostanete konkrétní směr,
+              který si společně projdeme.
+            </p>
+            <div className="proposal-output" aria-label="Co obsahuje návrh zdarma">
+              <article><span>01</span><b>Hlavní nabídka</b><p>Co má web prodávat a pro koho má být první volbou.</p></article>
+              <article><span>02</span><b>Cesta klienta</b><p>Instagram → důvěra → WhatsApp, rezervace nebo nákup.</p></article>
+              <article><span>03</span><b>Struktura webu</b><p>Které služby, proměny a reference mají dostat největší prostor.</p></article>
+              <article><span>04</span><b>Další krok</b><p>Co upravit nejdřív a zda vám vlastní web dává obchodní smysl.</p></article>
+            </div>
+            <a className="proposal-whatsapp" href={WHATSAPP_LINK} target="_blank" rel="noreferrer">
+              Raději napsat rovnou na WhatsApp <span>→</span>
+            </a>
+          </div>
+          <SystemProposalForm />
         </section>
 
         <section className="problem-section section-light" id="proc-web">
@@ -564,20 +660,20 @@ function App() {
         <section className="process section-light" id="spoluprace">
           <div className="section-topline">
             <span>08 / Jak probíhá spolupráce</span>
-            <p>Bez složitého zadání. Výsledek vidíte dřív, než zaplatíte.</p>
+            <p>Nejdřív si ujasníme směr. Do tvorby jdete až ve chvíli, kdy vám dává smysl.</p>
           </div>
           <div className="process-grid">
             <article>
               <span>01</span>
-              <div><small>Krátký rozhovor</small><h3>Pochopím vaši službu a cíl.</h3></div>
+              <div><small>Návrh zdarma</small><h3>Podívám se na vaše služby, profil a cíl.</h3></div>
             </article>
             <article>
               <span>02</span>
-              <div><small>Do 10 dnů</small><h3>Uvidíte první návrh struktury a designu.</h3></div>
+              <div><small>Krátký hovor</small><h3>Projdeme cestu klienta a podobu vašeho webu.</h3></div>
             </article>
             <article>
               <span>03</span>
-              <div><small>Tvorba webu</small><h3>Postavím web a společně doladíme detaily.</h3></div>
+              <div><small>Do 10 dnů</small><h3>Uvidíte první návrh struktury a designu.</h3></div>
             </article>
             <article>
               <span>04</span>
@@ -585,8 +681,11 @@ function App() {
             </article>
           </div>
           <div className="process-note">
-            <p>Po krátké úvodní SMS si vyjasníme cíl a podklady. První návrh pak připravím do 10 dnů.</p>
-            <a className="button button-dark" href={SMS_LINK}>Napsat SMS <span>→</span></a>
+            <p>Bezplatný návrh vám ukáže směr ještě před začátkem. Pokud vám bude dávat smysl, společně připravíme podklady a první verzi webu.</p>
+            <div className="process-actions">
+              <a className="button button-dark" href="#formular">Chci návrh zdarma <span>→</span></a>
+              <a className="process-call" href={CALL_SMS_LINK}>Domluvit si hovor</a>
+            </div>
           </div>
         </section>
 
@@ -607,7 +706,7 @@ function App() {
           </div>
           <div className="pricing-action">
             <div><b>První návrh do 10 dnů</b><span>Platba až po dokončení webu</span></div>
-            <a className="button button-accent" href={SMS_LINK}>Mám zájem o web <span>→</span></a>
+            <a className="button button-accent" href="#formular">Nejdřív návrh zdarma <span>→</span></a>
           </div>
         </section>
 
@@ -633,12 +732,13 @@ function App() {
         <section className="final-cta section-accent">
           <div>
             <span>11 / Další krok</span>
-            <h2>Váš web nemusí být větší. Musí být <em>přesvědčivější.</em></h2>
+            <h2>Nechte si ukázat, co může fungovat <em>právě u vás.</em></h2>
           </div>
           <div className="final-cta-copy">
-            <p>Napište mi krátkou SMS. Podíváme se, co by váš web měl ukázat, aby lidé rychleji pochopili vaši hodnotu a chtěli začít právě s vámi.</p>
-            <a className="button button-dark" href={SMS_LINK}>Napsat SMS o webu <span>→</span></a>
-            <small>Nezávazně · odpovídá Lukáš Keller</small>
+            <p>Pošlete mi svůj profil a cíl. Připravím konkrétní návrh, jak spojit vaše služby, důvěru a jednoduchý další krok do jednoho systému.</p>
+            <a className="button button-dark" href="#formular">Chci návrh pro sebe <span>→</span></a>
+            <a className="final-call-link" href={CALL_SMS_LINK}>Nebo si domluvit krátký hovor přes SMS →</a>
+            <small>Zdarma a nezávazně · odpovídá Lukáš Keller</small>
           </div>
         </section>
       </main>
@@ -648,16 +748,18 @@ function App() {
           <div><b>Lukáš Keller</b><small>Weby pro trenéry a sportovní projekty</small></div>
         </div>
         <div className="footer-contact">
-          <small>Napsat SMS</small>
-          <a href={SMS_LINK}>+420 601 507 018</a>
+          <small>WhatsApp</small>
+          <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer">+420 795 514 816</a>
         </div>
         <div className="footer-links">
+          <a href={CALL_SMS_LINK}>Domluvit hovor</a>
           <a href="#top">Zpět nahoru ↑</a>
           <span>© 2026</span>
         </div>
       </footer>
 
-      <a className="mobile-cta" href={SMS_LINK}>Napsat SMS o webu <span>→</span></a>
+      <a className="mobile-cta" href="#formular">Chci návrh zdarma <span>→</span></a>
+      <AiAssistant />
     </div>
   );
 }

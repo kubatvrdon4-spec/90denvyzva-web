@@ -1,0 +1,19 @@
+NAHRÁNÍ CELÉHO WEBU ZNOVU
+
+1. Rozbalte ZIP 90denvyzva-cely-web-v5.zip.
+2. Na GitHubu otevřete repozitář 90denvyzva-web a zůstaňte v jeho hlavní části.
+3. Klikněte na Add file → Upload files.
+4. Přetáhněte celou rozbalenou složku 90denvyzva-github-upload-v3.
+5. GitHub zobrazí 28 souborů. Potvrďte Commit changes.
+6. Soubory ve stávající stejnojmenné složce se přepíšou a Vercel vytvoří nové nasazení.
+
+Ve Vercelu neměňte Root Directory.
+
+AKTIVACE AI ASISTENTA
+
+Ve Vercelu otevřete Settings → Environment Variables a přidejte:
+
+OPENAI_API_KEY = váš tajný klíč z OpenAI Platform
+OPENAI_MODEL = gpt-5.6-luna
+
+Potom spusťte nové nasazení. API klíč nikdy nenahrávejte na GitHub.
