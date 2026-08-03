@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111210" />
+    <meta
+      name="description"
+      content="Nechte si zdarma navrhnout systém, který propojí vaše služby, Instagram, důvěru a nové poptávky. Weby na míru pro fitness trenéry."
+    />
+    <meta property="og:title" content="Návrh systému pro fitness trenéra zdarma | Keller" />
+    <meta
+      property="og:description"
+      content="Konkrétní návrh, jak propojit vaše služby, důvěru a cestu k nové poptávce. Zdarma a nezávazně."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.90denvyzva.cz/" />
+    <meta property="og:image" content="https://www.90denvyzva.cz/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Návrh systému pro fitness trenéra zdarma | Keller" />
+    <meta
+      name="twitter:description"
+      content="Konkrétní návrh, jak propojit vaše služby, důvěru a cestu k nové poptávce. Zdarma a nezávazně."
+    />
+    <meta name="twitter:image" content="https://www.90denvyzva.cz/og.png" />
+    <title>Návrh systému pro fitness trenéra zdarma | Keller</title>
+    <script type="module" crossorigin src="./assets/index-v3eNZsvM.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-0un7TX5H.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+const SPREADSHEET_ID = "1q2-PJakURdg-CxOEYcaFJg3P-z_o-bNkX8Bv2CnfJiA";
+const SHEET_NAME = "List 1";
+const HEADERS = [
+  "Datum a čas",
+  "ID konverzace",
+  "Typ",
+  "Otázka návštěvníka",
+  "Odpověď asistenta",
+  "Akce",
+  "Stránka",
+];
+
+function getLogSheet_() {
+  const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const sheet = spreadsheet.getSheetByName(SHEET_NAME);
+
+  if (!sheet) {
+    throw new Error("List s názvem '" + SHEET_NAME + "' nebyl nalezen.");
+  }
+
+  return sheet;
+}
+
+function ensureHeader_(sheet) {
+  const current = sheet.getRange(1, 1, 1, HEADERS.length).getDisplayValues()[0];
+  const isEmpty = current.every(function (value) { return value === ""; });
+
+  if (isEmpty) {
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+  }
+
+  sheet.setFrozenRows(1);
+  sheet.getRange(1, 1, 1, HEADERS.length)
+    .setFontWeight("bold")
+    .setBackground("#e8eaed")
+    .setVerticalAlignment("middle");
+  sheet.setColumnWidth(1, 155);
+  sheet.setColumnWidth(2, 230);
+  sheet.setColumnWidth(3, 90);
+  sheet.setColumnWidth(4, 360);
+  sheet.setColumnWidth(5, 460);
+  sheet.setColumnWidth(6, 130);
+  sheet.setColumnWidth(7, 150);
+}
+
+function safeCell_(value, maxLength) {
+  let text = String(value || "").trim().slice(0, maxLength || 4000);
+  if (/^[=+\-@]/.test(text)) {
+    text = "'" + text;
+  }
+  return text;
+}
+
+function json_(payload) {
+  return ContentService
+    .createTextOutput(JSON.stringify(payload))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function setup() {
+  const sheet = getLogSheet_();
+  ensureHeader_(sheet);
+}
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+
+  try {
+    const data = JSON.parse((e && e.postData && e.postData.contents) || "{}");
+    const expectedSecret = PropertiesService.getScriptProperties().getProperty("CHAT_LOG_SECRET");
+
+    if (!expectedSecret || data.secret !== expectedSecret) {
+      return json_({ ok: false, error: "unauthorized" });
+    }
+
+    if (!lock.tryLock(5000)) {
+      return json_({ ok: false, error: "busy" });
+    }
+
+    const sheet = getLogSheet_();
+    ensureHeader_(sheet);
+
+    const parsedDate = new Date(data.timestamp || "");
+    const timestamp = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+
+    sheet.appendRow([
+      timestamp,
+      safeCell_(data.sessionId, 80),
+      safeCell_(data.type, 30),
+      safeCell_(data.question, 4000),
+      safeCell_(data.answer, 4000),
+      safeCell_(data.action, 80),
+      safeCell_(data.page, 120),
+    ]);
+
+    const lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow, 1).setNumberFormat("dd.MM.yyyy HH:mm:ss");
+    sheet.getRange(lastRow, 4, 1, 2).setWrap(true).setVerticalAlignment("top");
+
+    return json_({ ok: true });
+  } catch (error) {
+    return json_({ ok: false, error: "write_failed" });
+  } finally {
+    if (lock.hasLock()) {
+      lock.releaseLock();
+    }
+  }
+}
